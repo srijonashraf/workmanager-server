@@ -1,21 +1,21 @@
 const express =require('express');
-const StudentController=require("../controllers/StudentController");
+const EmployeeController=require("../controllers/EmployeeController");
 const WorksController=require("../controllers/WorksController");
 const AuthVerifyMiddleware=require("../middleware/AuthVerifyMiddleware");
 
 
 const router =express.Router();
 
-// Student
-router.post("/registration",StudentController.registration);
-router.post("/login",StudentController.login);
+// Employee
+router.post("/registration",EmployeeController.registration);
+router.post("/login",EmployeeController.login);
 
-router.post("/profileUpdate",AuthVerifyMiddleware,StudentController.profileUpdate);
-router.get("/profileDetails",AuthVerifyMiddleware,StudentController.profileDetails);
-router.get("/profileDelete/:email",StudentController.profileDelete);
-router.get("/RecoverVerifyEmail/:email",StudentController.RecoverVerifyEmail);
-router.get("/RecoverVerifyOTP/:email/:otp",StudentController.RecoverVerifyOTP);
-router.post("/RecoverResetPass",StudentController.RecoverResetPass);
+router.post("/profileUpdate",AuthVerifyMiddleware,EmployeeController.profileUpdate);
+router.get("/profileDetails",AuthVerifyMiddleware,EmployeeController.profileDetails);
+router.get("/profileDelete/:email",EmployeeController.profileDelete);
+router.get("/RecoverVerifyEmail/:email",EmployeeController.RecoverVerifyEmail);
+router.get("/RecoverVerifyOTP/:email/:otp",EmployeeController.RecoverVerifyOTP);
+router.post("/RecoverResetPass",EmployeeController.RecoverResetPass);
 
 
 // Work

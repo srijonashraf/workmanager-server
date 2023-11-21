@@ -1,28 +1,32 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
+const dotenv = require("dotenv");
+dotenv.config({ path: ".env" });
 
-const SendEmailUtility= async (EmailTo, EmailText, EmailSubject) => {
+const SendEmailUtility = async (EmailTo, EmailText, EmailSubject) => {
+  let transporter = nodemailer.createTransport({
+    host: `${process.env.MailHost}`,
+    port: 587,
+    secure: false,
+    auth: {
+      user: `${process.env.AuthUser}`,
+      pass: `${process.env.AuthPass}`,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
 
-    let transporter = nodemailer.createTransport({
-        host: 'mail.teamrabbil.com',
-        port: 25,
-        secure: false,
-        auth: {
-            user: "info@teamrabbil.com",
-            pass: '~sR4[bhaC[Qs'
-        },tls: {
-            rejectUnauthorized: false
-        },
-    });
+  let mailOptions = {
+    from: `Work Manager <${process.env.AuthUser}>`,
+    to: EmailTo,
+    subject: EmailSubject,
+    text: EmailText,
+  };
 
-
-    let mailOptions = {
-        from: 'Task Manager MERN <info@teamrabbil.com>',
-        to: EmailTo,
-        subject: EmailSubject,
-        text: EmailText
-    };
-
-    return  await transporter.sendMail(mailOptions)
-
-}
-module.exports=SendEmailUtility
+  try {
+    return await transporter.sendMail(mailOptions);
+  } catch (err) {
+    console.log(err);
+  }
+};
+module.exports = SendEmailUtility;

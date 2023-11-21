@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const nodeMailer = require("nodemailer");
 const app = express();
 const rateLimit =require('express-rate-limit');
+require("dotenv").config();
 
 
 // Middleware
@@ -23,9 +24,20 @@ app.use(limiter)
 
 
 // Mongo DB Database Connection
-let URI="mongodb+srv://<username>:<password>@cluster0.nakaabb.mongodb.net/TaskManager?retryWrites=true&w=majority";
-let OPTION={user:'srijontestdb',pass:'srijon1234',autoIndex:true}
-mongoose.connect(URI,OPTION);
+let URL = `mongodb+srv://${process.env.USER}:${process.env.PASS}@cluster0.nakaabb.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`;
+let CONFIG = {
+  user: process.env.USER,
+  pass: process.env.PASS,
+  autoIndex: true,
+};
+
+try {
+    mongoose.connect(URL, CONFIG);
+    console.log("DB Connected!");
+  } catch (err) {
+    console.error(err);
+  }
+  
 
 
 // Routing Implement

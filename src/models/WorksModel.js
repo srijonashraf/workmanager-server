@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
-const DataSchema = mongoose.Schema(
+const WorkSchema = mongoose.Schema(
   {
-    title: { type: String, required: true },
-    classNote: { type: String, required: true },
-    description: { type: String, required: true },
-    status: { type: String, required: true },
+    workTitle: { type: String, required: true },
+    taskDetails: { type: String, required: true },
+    workDescription: { type: String, required: true },
+    workStatus: { type: String, required: true },
     createdBy: String,
   },
   { timestamps: true, versionKey: false }
 );
-const WorksModel = mongoose.model("works", DataSchema);
+const WorksModel = mongoose.model("works", WorkSchema);
 module.exports = WorksModel;

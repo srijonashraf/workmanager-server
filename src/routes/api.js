@@ -24,6 +24,8 @@ router.get("/updateWorkStatus/:id/:status",AuthVerifyMiddleware,WorksController.
 router.get("/listWorkByStatus/:status",AuthVerifyMiddleware,WorksController.listWorkByStatus);
 router.get("/workStatusCount",AuthVerifyMiddleware,WorksController.workStatusCount);
 router.get("/deleteWork/:id",AuthVerifyMiddleware,WorksController.deleteWork);
+router.get("/allWork",AuthVerifyMiddleware,WorksController.allWork);
+router.get("/search",AuthVerifyMiddleware,WorksController.search)
 
 
 module.exports=router;

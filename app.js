@@ -43,6 +43,7 @@ app.use("/", (req, res) => {
   res.json({ message: "Hello From Express App!" });
 });
 
+
 // Undefined Route Implement
 app.use("*", (req, res) => {
   res.status(404).json({ status: "fail", data: "Not Found" });

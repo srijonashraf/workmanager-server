@@ -66,7 +66,7 @@ exports.login = async (req, res) => {
         data: reqBody["email"],
       };
       let token = jwt.sign(Payload, "ABC-123");
-      res.status(200).json({ status: "success", data: token });
+      res.status(200).json({ status: "success", token: token });
     } else {
       // Login fail
       res.status(200).json({ status: "fail", data: "No User Found" });

@@ -7,7 +7,6 @@ exports.createWork = async (req, res) => {
     // Check if all required fields are present in the request body
     const requiredFields = [
       "workTitle",
-      "taskDetails",
       "workDescription",
       "workStatus",
     ];
@@ -21,7 +20,6 @@ exports.createWork = async (req, res) => {
 
     const existingWork = await WorksModel.findOne({
       workTitle: reqBody.workTitle,
-      taskDetails: reqBody.taskDetails,
       workDescription: reqBody.workDescription,
       createdBy: createdBy,
     });

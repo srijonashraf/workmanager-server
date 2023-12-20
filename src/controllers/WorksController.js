@@ -179,24 +179,44 @@ exports.allWork = async (req, res) => {
   }
 };
 
+// exports.search = async (req, res) => {
+//   try {
+//     let email = req.headers["email"];
+//     let id = req.query.id; // Retrieve the id from the query parameters
+//     let query = { createdBy: email, _id: id };
+
+//     // Using findOne to get a single result
+//     let result = await WorksModel.findOne(query);
+
+//     if (result) {
+//       res.status(200).json({ status: "success", data: result });
+//     } else {
+//       res.status(200).json({ status: "success", message: "No result found" });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ status: "fail", error: error.message });
+//   }
+// };
+
 exports.search = async (req, res) => {
   try {
     let email = req.headers["email"];
-    let id = req.query.id; // Retrieve the id from the query parameters
-    let query = { createdBy: email, _id: id };
+    let searchText = req.query.searchText; // Retrieve the search text from the query parameters
+    let query = { createdBy: email, $text: { $search: searchText } };
 
-    // Using findOne to get a single result
-    let result = await WorksModel.findOne(query);
+    // Using find to get multiple results based on text search
+    let results = await WorksModel.find(query);
 
-    if (result) {
-      res.status(200).json({ status: "success", data: result });
+    if (results.length > 0) {
+      res.status(200).json({ status: "success", data: results });
     } else {
-      res.status(200).json({ status: "success", message: "No result found" });
+      res.status(200).json({ status: "success", message: "No results found" });
     }
   } catch (error) {
     res.status(500).json({ status: "fail", error: error.message });
   }
 };
+
 
 exports.updateWork = async (req, res) => {
   try {

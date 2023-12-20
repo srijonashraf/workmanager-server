@@ -8,5 +8,6 @@ const WorkSchema = mongoose.Schema(
   },
   { timestamps: true, versionKey: false }
 );
+
 const WorksModel = mongoose.model("works", WorkSchema);
 module.exports = WorksModel;

@@ -5,11 +5,7 @@ exports.createWork = async (req, res) => {
     const createdBy = req.headers["email"]; // Use the email from the token
 
     // Check if all required fields are present in the request body
-    const requiredFields = [
-      "workTitle",
-      "workDescription",
-      "workStatus",
-    ];
+    const requiredFields = ["workTitle", "workDescription", "workStatus"];
     for (const field of requiredFields) {
       if (!reqBody[field]) {
         return res
@@ -38,17 +34,6 @@ exports.createWork = async (req, res) => {
     res.status(201).json({ status: "success", data: result });
   } catch (e) {
     res.status(500).json({ status: "fail", data: e.message });
-  }
-};
-
-exports.deleteWork = async (req, res) => {
-  try {
-    let id = req.params.id;
-    let Query = { _id: id };
-    let result = await WorksModel.deleteOne(Query);
-    res.status(200).json({ status: "success", data: result });
-  } catch (e) {
-    res.status(200).json({ status: "fail", data: e });
   }
 };
 
@@ -207,6 +192,33 @@ exports.search = async (req, res) => {
       res.status(200).json({ status: "success", data: result });
     } else {
       res.status(200).json({ status: "success", message: "No result found" });
+    }
+  } catch (error) {
+    res.status(500).json({ status: "fail", error: error.message });
+  }
+};
+
+exports.updateWork = async (req, res) => {
+  try {
+    const email = req.headers["email"];
+    const id = req.params.id;
+    const query = { createdBy: email, _id: id };
+
+    const existingWork = await WorksModel.findOne(query);
+
+    if (!existingWork) {
+      return res.status(404).json({ status: "fail", message: "Work not found" });
+    }
+
+    const updatedFields = req.body;
+
+    const result = await WorksModel.updateOne(query, updatedFields);
+    console.log(result)
+
+    if (result) {
+      res.status(200).json({ status: "success", data: result });
+    } else {
+      res.status(400).json({ status: "fail", message: "No data updated" });
     }
   } catch (error) {
     res.status(500).json({ status: "fail", error: error.message });

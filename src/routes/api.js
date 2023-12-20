@@ -21,6 +21,7 @@ router.post("/RecoverResetPass",EmployeeController.RecoverResetPass);
 // Work
 router.post("/createWork",AuthVerifyMiddleware,WorksController.createWork);
 router.get("/updateWorkStatus/:id/:status",AuthVerifyMiddleware,WorksController.updateWorkStatus);
+router.post("/updateWork/:id",AuthVerifyMiddleware,WorksController.updateWork);
 router.get("/listWorkByStatus/:status",AuthVerifyMiddleware,WorksController.listWorkByStatus);
 router.get("/workStatusCount",AuthVerifyMiddleware,WorksController.workStatusCount);
 router.get("/deleteWork/:id",AuthVerifyMiddleware,WorksController.deleteWork);

@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const WorkSchema = mongoose.Schema(
   {
-    workTitle: { type: String },
-    workDescription: { type: String },
+    workTitle: { type: String, required: true },
+    workDescription: { type: String, required: true },
     workStatus: { type: String, required: true },
     createdBy: String,
   },

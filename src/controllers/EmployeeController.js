@@ -81,7 +81,7 @@ exports.RecoverVerifyEmail = async (req, res) => {
     let email = req.params.email;
     let OTPCode = Math.floor(100000 + Math.random() * 900000);
     let EmailText = "Your Verification Code is =" + OTPCode;
-    let EmailSubject = "Task manager verification code";
+    let EmailSubject = "Work Manager verification code";
 
     let result = await EmployeeModel.find({ email: email }).count();
     if (result === 1) {

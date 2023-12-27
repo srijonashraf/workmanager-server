@@ -17,6 +17,7 @@ router.get("/profileDelete/:email",EmployeeController.profileDelete);
 router.get("/RecoverVerifyEmail/:email",EmployeeController.RecoverVerifyEmail);
 router.get("/RecoverVerifyOTP/:email/:otp",EmployeeController.RecoverVerifyOTP);
 router.post("/RecoverResetPass",EmployeeController.RecoverResetPass);
+router.get("/verified/:email",EmployeeController.profileVerification);
 
 
 // Work

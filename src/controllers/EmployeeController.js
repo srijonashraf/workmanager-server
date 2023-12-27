@@ -218,3 +218,15 @@ exports.RecoverResetPass = async (req, res) => {
     res.status(200).json({ status: "fail", data: "Invalid Verification" });
   }
 };
+
+
+//Profile Verification (Email)
+exports.profileVerification = async (req, res) => {
+  try {
+    let email = req.params.email;
+    let result = await EmployeeModel.updateOne({ email: email }, { verified: true });
+    res.status(200).json({ status: "success", data: result });
+  } catch (e) {
+    res.status(200).json({ status: "fail", data: e });
+  }
+}

@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const EmployeeSchema = mongoose.Schema(
   {
-    employeeId: { type: String, unique: true, default: "" },
     email: { type: String, unique: true, required: true },
     img: { type: String, default: "" },
     gender: { type: String, default: "" },

@@ -4,7 +4,6 @@ const EmployeeSchema = mongoose.Schema(
   {
     email: { type: String, unique: true, required: true },
     img: { type: String, default: "" },
-    gender: { type: String, default: "" },
     firstName: { type: String, default: "" },
     lastName: { type: String, default: "" },
     mobile: { type: String, default: "" },
@@ -12,6 +11,7 @@ const EmployeeSchema = mongoose.Schema(
     address: { type: String, default: "" },
     position: { type: String, default: "" },
     department: { type: String, default: "" },
+    verified : { type: Boolean, default: false }
   },
   { timestamps: true, versionKey: false }
 );

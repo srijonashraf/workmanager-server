@@ -9,6 +9,7 @@ const router =express.Router();
 // Employee
 router.post("/registration",EmployeeController.registration);
 router.post("/login",EmployeeController.login);
+router.post("/loginwithgoogle",EmployeeController.googleSignIn);
 
 router.post("/profileUpdate",AuthVerifyMiddleware,EmployeeController.profileUpdate);
 router.get("/profileDetails",AuthVerifyMiddleware,EmployeeController.profileDetails);

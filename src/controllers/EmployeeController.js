@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const OTPModel = require("../models/OTPModel");
 const SendEmailUtility = require("../utility/SendEmailUtility");
 
-//Creat
+//User Registration
 exports.registration = async (req, res) => {
   let reqBody = req.body;
   try {
@@ -14,47 +14,7 @@ exports.registration = async (req, res) => {
   }
 };
 
-//Read
-exports.profileDetails = async (req, res) => {
-  try {
-    let email = req.headers["email"];
-    let result = await EmployeeModel.find({ email: email });
-    res.status(200).json({ status: "success", data: result });
-  } catch (e) {
-    res.status(200).json({ status: "fail", data: e });
-  }
-};
-
-//Update
-exports.profileUpdate = async (req, res) => {
-  try {
-    let email = req.headers["email"];
-    let reqBody = req.body;
-    let result = await EmployeeModel.updateOne({ email: email }, reqBody);
-    res.status(200).json({ status: "success", data: result });
-  } catch (e) {
-    res.status(200).json({ status: "fail", data: e });
-  }
-};
-
-//Delete
-
-exports.profileDelete = async (req, res) => {
-  try {
-    const email = req.headers["email"];
-    const result = await EmployeeModel.deleteOne({ email: email });
-    if (result.deletedCount === 1) {
-      res
-        .status(200)
-        .json({ status: "success", message: "Profile deleted successfully" });
-    } else {
-      res.status(404).json({ status: "fail", message: "Profile not found" });
-    }
-  } catch (e) {
-    res.status(500).json({ status: "fail", data: e });
-  }
-};
-
+//User Login Manual
 exports.login = async (req, res) => {
   try {
     let reqBody = req.body;
@@ -76,6 +36,86 @@ exports.login = async (req, res) => {
   }
 };
 
+//User Login Google
+exports.googleSignIn = async (req, res) => {
+  let reqBody = req.body;
+
+  try {
+    
+    // Check if the user already exists in your database
+    const existingUser = await EmployeeModel.findOne({ email: reqBody["email"] });
+
+    if (existingUser) {
+      // User already exists, generate JWT token and send it back
+      let Payload = {
+        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+        data: reqBody["email"],
+      };
+      let token = jwt.sign(Payload, "ABC-123");
+      res.status(200).json({ status: "success", token: token });
+    } else {
+      // User doesn't exist, create a new user in the database
+      const newUser = await EmployeeModel.create({
+        email: reqBody["email"],
+        // Set other default values or prompt the user for additional information
+      });
+
+      let Payload = {
+        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+        data: reqBody["email"],
+      };
+      let token = jwt.sign(Payload, "ABC-123");
+      res.status(200).json({ status: "success", token: token });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "fail", error: "Failed to sign in with Google" });
+  }
+};
+
+//User Profile
+exports.profileDetails = async (req, res) => {
+  try {
+    let email = req.headers["email"];
+    let result = await EmployeeModel.find({ email: email });
+    res.status(200).json({ status: "success", data: result });
+  } catch (e) {
+    res.status(200).json({ status: "fail", data: e });
+  }
+};
+
+//User Profile Update
+exports.profileUpdate = async (req, res) => {
+  try {
+    let email = req.headers["email"];
+    let reqBody = req.body;
+    let result = await EmployeeModel.updateOne({ email: email }, reqBody);
+    res.status(200).json({ status: "success", data: result });
+  } catch (e) {
+    res.status(200).json({ status: "fail", data: e });
+  }
+};
+
+//User Profile Delete
+
+exports.profileDelete = async (req, res) => {
+  try {
+    const email = req.headers["email"];
+    const result = await EmployeeModel.deleteOne({ email: email });
+    if (result.deletedCount === 1) {
+      res
+        .status(200)
+        .json({ status: "success", message: "Profile deleted successfully" });
+    } else {
+      res.status(404).json({ status: "fail", message: "Profile not found" });
+    }
+  } catch (e) {
+    res.status(500).json({ status: "fail", data: e });
+  }
+};
+
+
+//Recover Password Step-1
 exports.RecoverVerifyEmail = async (req, res) => {
   try {
     let email = req.params.email;
@@ -99,6 +139,7 @@ exports.RecoverVerifyEmail = async (req, res) => {
   }
 };
 
+//Recover Password Step-2
 exports.RecoverVerifyOTP = async (req, res) => {
   let email = req.params.email;
   let OTPCode = req.params.otp;
@@ -121,6 +162,7 @@ exports.RecoverVerifyOTP = async (req, res) => {
   }
 };
 
+//Create New Password
 exports.RecoverResetPass = async (req, res) => {
   let email = req.body["email"];
   let OTPCode = req.body["OTP"];

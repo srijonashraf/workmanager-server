@@ -5,7 +5,6 @@ module.exports = (req, res, next) => {
 
   jwt.verify(token, "ABC-123", function (err, decoded) {
     if (err) {
-      // console.log(token);
       res.status(401).json({ status: "unauthorized" });
     } else {
       let email = decoded['data'];

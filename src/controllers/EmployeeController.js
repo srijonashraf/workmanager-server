@@ -36,30 +36,53 @@ exports.login = async (req, res) => {
   }
 };
 
-//User Login Google
 
+//Google Sign In
 exports.googleSignIn = async (req, res) => {
   const reqBody = req.body;
 
   try {
-    // Find the user by email
-    const existingUser = await EmployeeModel.findOne({ email: reqBody["email"] });
+    // Find the existing user by email
+    const existingUser = await EmployeeModel.findOne({
+      email: reqBody["email"],
+    });
 
     if (existingUser) {
-      // User already exists, update first and last names if not present
-      const updatedUser = await EmployeeModel.findOneAndUpdate(
-        { email: reqBody["email"], $or: [{ firstName: { $exists: false } }, { lastName: { $exists: false } }] },
-        { $set: { firstName: reqBody["firstName"], lastName: reqBody["lastName"] } },
-        { new: true }
-      );
+      // Update the existing user only if the firstName or lastName is empty
+      if (!existingUser.firstName || !existingUser.lastName) {
+        const updatedUser = await EmployeeModel.findOneAndUpdate(
+          {
+            email: reqBody["email"],
+            $or: [
+              { firstName: { $exists: false } },
+              { lastName: { $exists: false } },
+            ],
+          },
+          {
+            $set: {
+              firstName: existingUser.firstName || reqBody["firstName"],
+              lastName: existingUser.lastName || reqBody["lastName"],
+            },
+          },
+          { new: true }
+        );
 
-      // Generate JWT token and send it back
-      const payload = {
-        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
-        data: reqBody["email"],
-      };
-      const token = jwt.sign(payload, "ABC-123");
-      res.status(200).json({ status: "success", token: token });
+        // Generate JWT token and send it back
+        const payload = {
+          exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+          data: reqBody["email"],
+        };
+        const token = jwt.sign(payload, "ABC-123");
+        res.status(200).json({ status: "success", token: token });
+      } else {
+        // Existing user has firstName and lastName, create token
+        const payload = {
+          exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+          data: reqBody["email"],
+        };
+        const token = jwt.sign(payload, "ABC-123");
+        res.status(200).json({ status: "success", token: token });
+      }
     } else {
       // User doesn't exist, create a new user in the database with first and last names
       const newUser = await EmployeeModel.create({
@@ -69,6 +92,7 @@ exports.googleSignIn = async (req, res) => {
         // Set other default values or prompt the user for additional information
       });
 
+      // Generate JWT token and send it back
       const payload = {
         exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
         data: reqBody["email"],
@@ -78,13 +102,11 @@ exports.googleSignIn = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: "fail", error: "Failed to sign in with Google" });
+    res
+      .status(500)
+      .json({ status: "fail", error: "Failed to sign in with Google" });
   }
 };
-
-
-
-
 
 //User Profile
 exports.profileDetails = async (req, res) => {
@@ -126,7 +148,6 @@ exports.profileDelete = async (req, res) => {
     res.status(500).json({ status: "fail", data: e });
   }
 };
-
 
 //Recover Password Step-1
 exports.RecoverVerifyEmail = async (req, res) => {

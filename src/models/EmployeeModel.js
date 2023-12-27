@@ -1,17 +1,22 @@
 const mongoose = require("mongoose");
+
 const EmployeeSchema = mongoose.Schema(
   {
-    employeeId: { type: String, unique: true, required: true },
+    employeeId: { type: String, unique: true, default: "" },
     email: { type: String, unique: true, required: true },
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    mobile: { type: String, required: true },
-    password: { type: String, required: true },
-    address: { type: String, required: true },
-    position: { type: String, required: true },
-    department: { type: String, required: true },
+    img: { type: String, default: "" },
+    gender: { type: String, default: "" },
+    firstName: { type: String, default: "" },
+    lastName: { type: String, default: "" },
+    mobile: { type: String, default: "" },
+    password: { type: String, default: "" },
+    address: { type: String, default: "" },
+    position: { type: String, default: "" },
+    department: { type: String, default: "" },
   },
   { timestamps: true, versionKey: false }
 );
+
 const EmployeeModel = mongoose.model("employees", EmployeeSchema);
+
 module.exports = EmployeeModel;

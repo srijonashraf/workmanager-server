@@ -37,41 +37,83 @@ exports.login = async (req, res) => {
 };
 
 //User Login Google
+
+//Manual
+// exports.googleSignIn = async (req, res) => {
+//   const reqBody = req.body;
+
+//   try {
+//     // Find the user by email
+//     const existingUser = await EmployeeModel.findOne({ email: reqBody["email"] });
+
+//     if (existingUser) {
+//       // User already exists, update first and last names if not present
+//       const updatedUser = await EmployeeModel.findOneAndUpdate(
+//         { email: reqBody["email"], $or: [{ firstName: { $exists: false } }, { lastName: { $exists: false } }] },
+//         { $set: { firstName: reqBody["firstName"], lastName: reqBody["lastName"] } },
+//         { new: true }
+//       );
+
+//       // Generate JWT token and send it back
+//       const payload = {
+//         exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+//         data: reqBody["email"],
+//       };
+//       const token = jwt.sign(payload, "ABC-123");
+//       res.status(200).json({ status: "success", token: token });
+//     } else {
+//       // User doesn't exist, create a new user in the database with first and last names
+//       const newUser = await EmployeeModel.create({
+//         email: reqBody["email"],
+//         firstName: reqBody["firstName"],
+//         lastName: reqBody["lastName"],
+//         // Set other default values or prompt the user for additional information
+//       });
+
+//       const payload = {
+//         exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+//         data: reqBody["email"],
+//       };
+//       const token = jwt.sign(payload, "ABC-123");
+//       res.status(200).json({ status: "success", token: token });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ status: "fail", error: "Failed to sign in with Google" });
+//   }
+// };
+
+
+//upsert methodd
 exports.googleSignIn = async (req, res) => {
-  let reqBody = req.body;
+  const reqBody = req.body;
 
   try {
-    
-    // Check if the user already exists in your database
-    const existingUser = await EmployeeModel.findOne({ email: reqBody["email"] });
-
-    if (existingUser) {
-      // User already exists, generate JWT token and send it back
-      let Payload = {
-        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
-        data: reqBody["email"],
-      };
-      let token = jwt.sign(Payload, "ABC-123");
-      res.status(200).json({ status: "success", token: token });
-    } else {
-      // User doesn't exist, create a new user in the database
-      const newUser = await EmployeeModel.create({
+    // Use findOneAndUpdate with upsert option
+    const updatedUser = await EmployeeModel.findOneAndUpdate(
+      { email: reqBody["email"] },
+      { $set: { 
         email: reqBody["email"],
-        // Set other default values or prompt the user for additional information
-      });
+        firstName: reqBody["firstName"],
+        lastName: reqBody["lastName"],
+      }},
+      { upsert: true, new: true }
+    );
 
-      let Payload = {
-        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
-        data: reqBody["email"],
-      };
-      let token = jwt.sign(Payload, "ABC-123");
-      res.status(200).json({ status: "success", token: token });
-    }
+    // Generate JWT token and send it back
+    const payload = {
+      exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+      data: reqBody["email"],
+    };
+    const token = jwt.sign(payload, "ABC-123");
+    res.status(200).json({ status: "success", token: token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: "fail", error: "Failed to sign in with Google" });
   }
 };
+
+
 
 //User Profile
 exports.profileDetails = async (req, res) => {

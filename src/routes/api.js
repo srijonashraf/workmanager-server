@@ -7,28 +7,28 @@ const AuthVerifyMiddleware=require("../middleware/AuthVerifyMiddleware");
 const router =express.Router();
 
 // Employee
-router.post("/registration",EmployeeController.registration);
-router.post("/login",EmployeeController.login);
-router.post("/loginwithgoogle",EmployeeController.googleSignIn);
+router.post("/UserRegistration",EmployeeController.UserRegistration);
+router.post("/UserLogin",EmployeeController.UserLogin);
+router.post("/UserGoogleSignIn",EmployeeController.UserGoogleSignIn);
 
-router.post("/profileUpdate",AuthVerifyMiddleware,EmployeeController.profileUpdate);
-router.get("/profileDetails",AuthVerifyMiddleware,EmployeeController.profileDetails);
-router.get("/profileDelete/:email",EmployeeController.profileDelete);
+router.get("/ProfileDetails",AuthVerifyMiddleware,EmployeeController.ProfileDetails);
+router.post("/ProfileUpdate",AuthVerifyMiddleware,EmployeeController.ProfileUpdate);
+router.get("/ProfileDelete",EmployeeController.ProfileDelete);
+router.get("/ProfileVerification/:email",EmployeeController.ProfileVerification);
 router.get("/RecoverVerifyEmail/:email",EmployeeController.RecoverVerifyEmail);
 router.get("/RecoverVerifyOTP/:email/:otp",EmployeeController.RecoverVerifyOTP);
 router.post("/RecoverResetPass",EmployeeController.RecoverResetPass);
-router.get("/verified/:email",EmployeeController.profileVerification);
 
 
 // Work
-router.post("/createWork",AuthVerifyMiddleware,WorksController.createWork);
-router.get("/updateWorkStatus/:id/:status",AuthVerifyMiddleware,WorksController.updateWorkStatus);
-router.post("/updateWork/:id",AuthVerifyMiddleware,WorksController.updateWork);
-router.get("/listWorkByStatus/:status",AuthVerifyMiddleware,WorksController.listWorkByStatus);
-router.get("/workStatusCount",AuthVerifyMiddleware,WorksController.workStatusCount);
-router.get("/deleteWork/:id",AuthVerifyMiddleware,WorksController.deleteWork);
-router.get("/allWork",AuthVerifyMiddleware,WorksController.allWork);
-router.get("/search",AuthVerifyMiddleware,WorksController.search)
+router.post("/WorkCreate",AuthVerifyMiddleware,WorksController.WorkCreate);
+router.get("/WorkAllList",AuthVerifyMiddleware,WorksController.WorkAllList);
+router.get("/WorkListByStatus/:status",AuthVerifyMiddleware,WorksController.WorkListByStatus);
+router.get("/WorkStatusCountIndividual",AuthVerifyMiddleware,WorksController.WorkStatusCountIndividual);
+router.get("/WorkStatusUpdate/:id/:status",AuthVerifyMiddleware,WorksController.WorkStatusUpdate);
+router.post("/WorkUpdate/:id",AuthVerifyMiddleware,WorksController.WorkUpdate);
+router.get("/WorkDelete/:id",AuthVerifyMiddleware,WorksController.WorkDelete);
+// router.get("/WorkSearch",AuthVerifyMiddleware,WorksController.WorkSearch)
 
 
 module.exports=router;

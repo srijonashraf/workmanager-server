@@ -1,50 +1,48 @@
+const CreateJWTToken = require("../helper/CreateJWTTokenHelper.js");
 const EmployeeModel = require("../models/EmployeeModel");
 const jwt = require("jsonwebtoken");
 const OTPModel = require("../models/OTPModel");
 const SendEmailUtility = require("../utility/SendEmailUtility");
 
 //User Registration
-exports.registration = async (req, res) => {
+exports.UserRegistration = async (req, res) => {
   let reqBody = req.body;
-  const exisitngUser = await EmployeeModel.find({
-    email: reqBody["email"],
-  }).count();
-  if (exisitngUser === 1) {
-    res.status(200).json({ status: "fail", data: "User Already Exists" });
-  } else {
-    try {
+  try {
+    const exisitngUser = await EmployeeModel.find({
+      email: reqBody["email"],
+    }).count();
+    if (exisitngUser === 1) {
+      res.status(200).json({ status: "fail", data: "User Already Exists" });
+    } else {
       let result = await EmployeeModel.create(reqBody);
       res.status(200).json({ status: "success", data: result });
-    } catch (e) {
-      res.status(200).json({ status: "fail", data: e });
-    }
-  }
-};
-
-//User Login Manual
-exports.login = async (req, res) => {
-  try {
-    let reqBody = req.body;
-    let result = await EmployeeModel.find(reqBody).count();
-    if (result === 1) {
-      // Create Token
-      let Payload = {
-        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
-        data: reqBody["email"],
-      };
-      let token = jwt.sign(Payload, "ABC-123");
-      res.status(200).json({ status: "success", token: token });
-    } else {
-      // Login fail
-      res.status(200).json({ status: "fail", data: "No User Found" });
     }
   } catch (e) {
     res.status(200).json({ status: "fail", data: e });
   }
 };
 
+//User Login Manual
+exports.UserLogin = async (req, res) => {
+  try {
+    let reqBody = req.body;
+    let result = await EmployeeModel.find(reqBody).count();
+    if (result === 1) {
+      // Create JWT Token
+      const token = CreateJWTToken(reqBody);
+      res
+        .status(200)
+        .json({ status: "success", email: reqBody["email"], token: token });
+    } else {
+      res.status(200).json({ status: "fail", data: "No User Found" });
+    }
+  } catch (e) {
+    res.status(200).json({ status: "error", data: e });
+  }
+};
+
 //Google Sign In
-exports.googleSignIn = async (req, res) => {
+exports.UserGoogleSignIn = async (req, res) => {
   const reqBody = req.body;
 
   try {
@@ -74,19 +72,11 @@ exports.googleSignIn = async (req, res) => {
         );
 
         // Generate JWT token and send it back
-        const payload = {
-          exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
-          data: reqBody["email"],
-        };
-        const token = jwt.sign(payload, "ABC-123");
+       const token = CreateJWTToken(reqBody);
         res.status(200).json({ status: "success", token: token });
       } else {
         // Existing user has firstName and lastName, create token
-        const payload = {
-          exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
-          data: reqBody["email"],
-        };
-        const token = jwt.sign(payload, "ABC-123");
+       const token = CreateJWTToken(reqBody);
         res.status(200).json({ status: "success", token: token });
       }
     } else {
@@ -95,15 +85,10 @@ exports.googleSignIn = async (req, res) => {
         email: reqBody["email"],
         firstName: reqBody["firstName"],
         lastName: reqBody["lastName"],
-        // Set other default values or prompt the user for additional information
       });
 
       // Generate JWT token and send it back
-      const payload = {
-        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
-        data: reqBody["email"],
-      };
-      const token = jwt.sign(payload, "ABC-123");
+     const token = CreateJWTToken(reqBody);
       res.status(200).json({ status: "success", token: token });
     }
   } catch (error) {
@@ -115,7 +100,7 @@ exports.googleSignIn = async (req, res) => {
 };
 
 //User Profile
-exports.profileDetails = async (req, res) => {
+exports.ProfileDetails = async (req, res) => {
   try {
     let email = req.headers["email"];
     let result = await EmployeeModel.find({ email: email });
@@ -126,7 +111,7 @@ exports.profileDetails = async (req, res) => {
 };
 
 //User Profile Update
-exports.profileUpdate = async (req, res) => {
+exports.ProfileUpdate = async (req, res) => {
   try {
     let email = req.headers["email"];
     let reqBody = req.body;
@@ -139,19 +124,36 @@ exports.profileUpdate = async (req, res) => {
 
 //User Profile Delete
 
-exports.profileDelete = async (req, res) => {
+exports.ProfileDelete = async (req, res) => {
   try {
     const email = req.headers["email"];
     const result = await EmployeeModel.deleteOne({ email: email });
     if (result.deletedCount === 1) {
       res
         .status(200)
-        .json({ status: "success", message: "Profile deleted successfully" });
+        .json({ status: "success", data: "Profile deleted successfully" });
     } else {
-      res.status(404).json({ status: "fail", message: "Profile not found" });
+      res.status(200).json({ status: "fail", data: "Profile not found" });
     }
   } catch (e) {
     res.status(500).json({ status: "fail", data: e });
+  }
+};
+
+//User Profile Verification (Email)
+exports.ProfileVerification = async (req, res) => {
+  try {
+    let email = req.params.email;
+    let data = await EmployeeModel.updateOne(
+      { email: email },
+      { verified: true }
+    );
+    res.status(200).json({ status: "success", data: "Email Verified" });
+  } catch (e) {
+    res.status(200).json({
+      status: "fail",
+      data: e,
+    });
   }
 };
 
@@ -160,22 +162,28 @@ exports.RecoverVerifyEmail = async (req, res) => {
   try {
     let email = req.params.email;
     let OTPCode = Math.floor(100000 + Math.random() * 900000);
-    let EmailText = "Your Verification Code is =" + OTPCode;
-    let EmailSubject = "Work Manager verification code";
+    let EmailText = `Your verification code is ${OTPCode} which expires in 3 minutes`;
+    let EmailSubject = "Work Manager verification";
 
     let result = await EmployeeModel.find({ email: email }).count();
     if (result === 1) {
       await SendEmailUtility(email, EmailText, EmailSubject);
+
+      // Set a timeout for 3 minutes to expire the verification code
+      setTimeout(async () => {
+        await OTPModel.deleteOne({ email: email, otp: OTPCode });
+      }, 3 * 60 * 1000); // 3 minutes in milliseconds
+
       await OTPModel.create({ email: email, otp: OTPCode });
       res.status(200).json({
         status: "success",
-        data: "6 Digit Verification Code has been send",
+        data: "6 digit verification code sent to your email",
       });
     } else {
       res.status(200).json({ status: "fail", data: "No User Found" });
     }
-  } catch (err) {
-    res.status(500).json({ status: "error", data: err });
+  } catch (e) {
+    res.status(500).json({ status: "error", data: e });
   }
 };
 
@@ -185,20 +193,23 @@ exports.RecoverVerifyOTP = async (req, res) => {
   let OTPCode = req.params.otp;
   let status = 0;
   let statusUpdate = 1;
-
-  let result = await OTPModel.find({
-    email: email,
-    otp: OTPCode,
-    status: status,
-  }).count();
-  if (result === 1) {
-    await OTPModel.updateOne(
-      { email: email, otp: OTPCode, status: status },
-      { status: statusUpdate }
-    );
-    res.status(200).json({ status: "success", data: "Verification Completed" });
-  } else {
-    res.status(200).json({ status: "fail", data: "Invalid Verification" });
+  try {
+    let result = await OTPModel.find({
+      email: email,
+      otp: OTPCode,
+      status: status,
+    }).count();
+    if (result === 1) {
+      const data = await OTPModel.updateOne(
+        { email: email, otp: OTPCode, status: status },
+        { status: statusUpdate }
+      );
+      res.status(200).json({ status: "success", data: "OTP Verified" });
+    } else {
+      res.status(200).json({ status: "fail", data: "Invalid Verification" });
+    }
+  } catch (e) {
+    res.status(500).json({ status: "error", data: e });
   }
 };
 
@@ -206,35 +217,24 @@ exports.RecoverVerifyOTP = async (req, res) => {
 exports.RecoverResetPass = async (req, res) => {
   let email = req.body["email"];
   let OTPCode = req.body["OTP"];
-  let NewPass = req.body["password"];
+  let NewPassword = req.body["password"];
   let statusUpdate = 1;
-
-  let result = await OTPModel.find({
-    email: email,
-    otp: OTPCode,
-    status: statusUpdate,
-  }).count();
-  if (result === 1) {
-    let result = await EmployeeModel.updateOne(
-      { email: email },
-      { password: NewPass }
-    );
-    res.status(200).json({ status: "success", data: "Password Reset Success" });
-  } else {
-    res.status(200).json({ status: "fail", data: "Invalid Verification" });
-  }
-};
-
-//Profile Verification (Email)
-exports.profileVerification = async (req, res) => {
   try {
-    let email = req.params.email;
-    let result = await EmployeeModel.updateOne(
-      { email: email },
-      { verified: true }
-    );
-    res.status(200).json({ status: "success", data: result });
+    let result = await OTPModel.find({
+      email: email,
+      otp: OTPCode,
+      status: statusUpdate,
+    }).count();
+    if (result === 1) {
+      const data = await EmployeeModel.updateOne(
+        { email: email },
+        { password: NewPassword }
+      );
+      res.status(200).json({ status: "success", data: "Password Updated" });
+    } else {
+      res.status(200).json({ status: "fail", data: "Password not updated" });
+    }
   } catch (e) {
-    res.status(200).json({ status: "fail", data: e });
+    res.status(500).json({ status: "error", data: e });
   }
 };

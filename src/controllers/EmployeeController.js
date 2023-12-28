@@ -6,11 +6,18 @@ const SendEmailUtility = require("../utility/SendEmailUtility");
 //User Registration
 exports.registration = async (req, res) => {
   let reqBody = req.body;
-  try {
-    let result = await EmployeeModel.create(reqBody);
-    res.status(200).json({ status: "success", data: result });
-  } catch (e) {
-    res.status(200).json({ status: "fail", data: e });
+  const exisitngUser = await EmployeeModel.find({
+    email: reqBody["email"],
+  }).count();
+  if (exisitngUser === 1) {
+    res.status(200).json({ status: "fail", data: "User Already Exists" });
+  } else {
+    try {
+      let result = await EmployeeModel.create(reqBody);
+      res.status(200).json({ status: "success", data: result });
+    } catch (e) {
+      res.status(200).json({ status: "fail", data: e });
+    }
   }
 };
 
@@ -35,7 +42,6 @@ exports.login = async (req, res) => {
     res.status(200).json({ status: "fail", data: e });
   }
 };
-
 
 //Google Sign In
 exports.googleSignIn = async (req, res) => {
@@ -219,14 +225,16 @@ exports.RecoverResetPass = async (req, res) => {
   }
 };
 
-
 //Profile Verification (Email)
 exports.profileVerification = async (req, res) => {
   try {
     let email = req.params.email;
-    let result = await EmployeeModel.updateOne({ email: email }, { verified: true });
+    let result = await EmployeeModel.updateOne(
+      { email: email },
+      { verified: true }
+    );
     res.status(200).json({ status: "success", data: result });
   } catch (e) {
     res.status(200).json({ status: "fail", data: e });
   }
-}
+};

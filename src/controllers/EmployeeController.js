@@ -73,11 +73,11 @@ exports.UserGoogleSignIn = async (req, res) => {
 
         // Generate JWT token and send it back
        const token = CreateJWTToken(reqBody);
-        res.status(200).json({ status: "success", token: token });
+        res.status(200).json({ status: "success",email: reqBody["email"], token: token });
       } else {
         // Existing user has firstName and lastName, create token
        const token = CreateJWTToken(reqBody);
-        res.status(200).json({ status: "success", token: token });
+        res.status(200).json({ status: "success",email: reqBody["email"], token: token });
       }
     } else {
       // User doesn't exist, create a new user in the database with first and last names
@@ -89,7 +89,7 @@ exports.UserGoogleSignIn = async (req, res) => {
 
       // Generate JWT token and send it back
      const token = CreateJWTToken(reqBody);
-      res.status(200).json({ status: "success", token: token });
+      res.status(200).json({ status: "success",email: reqBody["email"], token: token });
     }
   } catch (error) {
     console.error(error);

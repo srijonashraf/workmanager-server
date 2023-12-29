@@ -13,7 +13,7 @@ router.post("/UserGoogleSignIn",EmployeeController.UserGoogleSignIn);
 
 router.get("/ProfileDetails",AuthVerifyMiddleware,EmployeeController.ProfileDetails);
 router.post("/ProfileUpdate",AuthVerifyMiddleware,EmployeeController.ProfileUpdate);
-router.get("/ProfileDelete",EmployeeController.ProfileDelete);
+router.get("/ProfileDelete",AuthVerifyMiddleware,EmployeeController.ProfileDelete);
 router.get("/ProfileVerification/:email",EmployeeController.ProfileVerification);
 router.get("/RecoverVerifyEmail/:email",EmployeeController.RecoverVerifyEmail);
 router.get("/RecoverVerifyOTP/:email/:otp",EmployeeController.RecoverVerifyOTP);

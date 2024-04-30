@@ -30,6 +30,13 @@ exports.UserLogin = async (req, res) => {
     if (result === 1) {
       // Create JWT Token
       const token = CreateJWTToken(reqBody);
+
+      res.cookie("token", token, { 
+        httpOnly: true,
+        secure: true, // Ensures that the cookie is only sent over HTTPS
+        sameSite: "None" // Allows the cookie to be sent in cross-origin requests
+      });
+      
       res
         .status(200)
         .json({ status: "success", email: reqBody["email"], token: token });
@@ -42,6 +49,63 @@ exports.UserLogin = async (req, res) => {
 };
 
 //Google Sign In
+// exports.UserGoogleSignIn = async (req, res) => {
+//   const reqBody = req.body;
+
+//   try {
+//     // Find the existing user by email
+//     const existingUser = await EmployeeModel.findOne({
+//       email: reqBody["email"],
+//     });
+
+//     if (existingUser) {
+//       // Update the existing user only if the firstName or lastName is empty
+//       if (!existingUser.firstName || !existingUser.lastName) {
+//         const updatedUser = await EmployeeModel.findOneAndUpdate(
+//           {
+//             email: reqBody["email"],
+//             $or: [
+//               { firstName: { $exists: false } },
+//               { lastName: { $exists: false } },
+//             ],
+//           },
+//           {
+//             $set: {
+//               firstName: existingUser.firstName || reqBody["firstName"],
+//               lastName: existingUser.lastName || reqBody["lastName"],
+//             },
+//           },
+//           { new: true }
+//         );
+
+//         // Generate JWT token and send it back
+//        const token = CreateJWTToken(reqBody);
+//         res.status(200).json({ status: "success",email: reqBody["email"], token: token });
+//       } else {
+//         // Existing user has firstName and lastName, create token
+//        const token = CreateJWTToken(reqBody);
+//         res.status(200).json({ status: "success",email: reqBody["email"], token: token });
+//       }
+//     } else {
+//       // User doesn't exist, create a new user in the database with first and last names
+//       const newUser = await EmployeeModel.create({
+//         email: reqBody["email"],
+//         firstName: reqBody["firstName"],
+//         lastName: reqBody["lastName"],
+//       });
+
+//       // Generate JWT token and send it back
+//      const token = CreateJWTToken(reqBody);
+//       res.status(200).json({ status: "success",email: reqBody["email"], token: token });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res
+//       .status(500)
+//       .json({ status: "fail", error: "Failed to sign in with Google" });
+//   }
+// };
+
 exports.UserGoogleSignIn = async (req, res) => {
   const reqBody = req.body;
 
@@ -71,13 +135,29 @@ exports.UserGoogleSignIn = async (req, res) => {
           { new: true }
         );
 
-        // Generate JWT token and send it back
-       const token = CreateJWTToken(reqBody);
-        res.status(200).json({ status: "success",email: reqBody["email"], token: token });
+        // Generate JWT token
+        const token = CreateJWTToken(reqBody);
+
+        // Set the token as a cookie in the response
+        res.cookie("token", token, { 
+          httpOnly: true,
+          secure: true, // Ensures that the cookie is only sent over HTTPS
+          sameSite: "None" // Allows the cookie to be sent in cross-origin requests
+        });
+
+        res.status(200).json({ status: "success", email: reqBody["email"], token: token });
       } else {
         // Existing user has firstName and lastName, create token
-       const token = CreateJWTToken(reqBody);
-        res.status(200).json({ status: "success",email: reqBody["email"], token: token });
+        const token = CreateJWTToken(reqBody);
+
+        // Set the token as a cookie in the response
+        res.cookie("token", token, { 
+          httpOnly: true,
+          secure: true, // Ensures that the cookie is only sent over HTTPS
+          sameSite: "None" // Allows the cookie to be sent in cross-origin requests
+        });
+
+        res.status(200).json({ status: "success", email: reqBody["email"], token: token });
       }
     } else {
       // User doesn't exist, create a new user in the database with first and last names
@@ -87,17 +167,24 @@ exports.UserGoogleSignIn = async (req, res) => {
         lastName: reqBody["lastName"],
       });
 
-      // Generate JWT token and send it back
-     const token = CreateJWTToken(reqBody);
-      res.status(200).json({ status: "success",email: reqBody["email"], token: token });
+      // Generate JWT token
+      const token = CreateJWTToken(reqBody);
+
+      // Set the token as a cookie in the response
+      res.cookie("token", token, { 
+        httpOnly: true,
+        secure: true, // Ensures that the cookie is only sent over HTTPS
+        sameSite: "None" // Allows the cookie to be sent in cross-origin requests
+      });
+
+      res.status(200).json({ status: "success", email: reqBody["email"], token: token });
     }
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ status: "fail", error: "Failed to sign in with Google" });
+    res.status(500).json({ status: "fail", error: "Failed to sign in with Google" });
   }
 };
+
 
 //User Profile
 exports.ProfileDetails = async (req, res) => {

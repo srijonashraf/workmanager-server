@@ -36,7 +36,7 @@ exports.UserLogin = async (req, res) => {
       res.cookie("token", token, {
         httpOnly: true,
         secure: false, // Ensures that the cookie is only sent over HTTPS
-        sameSite: "Lax", // Allows the cookie to be sent in cross-origin requests; Commenting this is working on localhost
+        // sameSite: "Lax", // Allows the cookie to be sent in cross-origin requests; Commenting this is working on localhost
         maxAge: 24 * 60 * 60 * 1000,
       });
 

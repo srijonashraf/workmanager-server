@@ -16,6 +16,7 @@ const corsOptions = {
   origin: [
     "http://localhost:5173",
     "https://workmanager-srijonashraf.netlify.app",
+    "https://work-manager-frontend.vercel.app"
   ],
   credentials: true,
 };

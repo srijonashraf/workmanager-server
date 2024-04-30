@@ -31,12 +31,13 @@ exports.UserLogin = async (req, res) => {
       // Create JWT Token
       const token = CreateJWTToken(reqBody);
 
-      res.cookie("token", token, { 
+      res.cookie("token", token, {
         httpOnly: true,
         secure: true, // Ensures that the cookie is only sent over HTTPS
-        sameSite: "None" // Allows the cookie to be sent in cross-origin requests
+        sameSite: "None", // Allows the cookie to be sent in cross-origin requests
+        maxAge: 24 * 60 * 60 * 1000,
       });
-      
+
       res
         .status(200)
         .json({ status: "success", email: reqBody["email"], token: token });
@@ -139,25 +140,31 @@ exports.UserGoogleSignIn = async (req, res) => {
         const token = CreateJWTToken(reqBody);
 
         // Set the token as a cookie in the response
-        res.cookie("token", token, { 
+        res.cookie("token", token, {
           httpOnly: true,
           secure: true, // Ensures that the cookie is only sent over HTTPS
-          sameSite: "None" // Allows the cookie to be sent in cross-origin requests
+          sameSite: "None", // Allows the cookie to be sent in cross-origin requests
+          maxAge: 24 * 60 * 60 * 1000,
         });
 
-        res.status(200).json({ status: "success", email: reqBody["email"], token: token });
+        res
+          .status(200)
+          .json({ status: "success", email: reqBody["email"], token: token });
       } else {
         // Existing user has firstName and lastName, create token
         const token = CreateJWTToken(reqBody);
 
         // Set the token as a cookie in the response
-        res.cookie("token", token, { 
+        res.cookie("token", token, {
           httpOnly: true,
           secure: true, // Ensures that the cookie is only sent over HTTPS
-          sameSite: "None" // Allows the cookie to be sent in cross-origin requests
+          sameSite: "None", // Allows the cookie to be sent in cross-origin requests
+          maxAge: 24 * 60 * 60 * 1000,
         });
 
-        res.status(200).json({ status: "success", email: reqBody["email"], token: token });
+        res
+          .status(200)
+          .json({ status: "success", email: reqBody["email"], token: token });
       }
     } else {
       // User doesn't exist, create a new user in the database with first and last names
@@ -171,20 +178,40 @@ exports.UserGoogleSignIn = async (req, res) => {
       const token = CreateJWTToken(reqBody);
 
       // Set the token as a cookie in the response
-      res.cookie("token", token, { 
+      res.cookie("token", token, {
         httpOnly: true,
         secure: true, // Ensures that the cookie is only sent over HTTPS
-        sameSite: "None" // Allows the cookie to be sent in cross-origin requests
+        sameSite: "None", // Allows the cookie to be sent in cross-origin requests
+        maxAge: 24 * 60 * 60 * 1000,
       });
 
-      res.status(200).json({ status: "success", email: reqBody["email"], token: token });
+      res
+        .status(200)
+        .json({ status: "success", email: reqBody["email"], token: token });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: "fail", error: "Failed to sign in with Google" });
+    res
+      .status(500)
+      .json({ status: "fail", error: "Failed to sign in with Google" });
   }
 };
 
+//User Logout
+
+exports.UserLogout = async (req, res) => {
+  try {
+    let cookieOption = {
+      expires: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      httpOnly: true,
+    };
+    res.cookie("token", "", cookieOption);
+    return res.status(200).json({ status: "success", message:"User logged out successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: "fail", error: "Failed to logout" });
+  }
+};
 
 //User Profile
 exports.ProfileDetails = async (req, res) => {

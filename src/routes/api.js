@@ -10,7 +10,7 @@ const router =express.Router();
 router.post("/UserRegistration",EmployeeController.UserRegistration);
 router.post("/UserLogin",EmployeeController.UserLogin);
 router.post("/UserGoogleSignIn",EmployeeController.UserGoogleSignIn);
-router.get("/UserLogout",EmployeeController.UserLogout);
+router.get("/UserLogout",AuthVerifyMiddleware,EmployeeController.UserLogout);
 
 router.get("/ProfileDetails",AuthVerifyMiddleware,EmployeeController.ProfileDetails);
 router.post("/ProfileUpdate",AuthVerifyMiddleware,EmployeeController.ProfileUpdate);

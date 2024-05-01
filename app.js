@@ -1,29 +1,30 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const jsonwebtoken = require("jsonwebtoken");
 const mongoose = require("mongoose");
-const nodeMailer = require("nodemailer");
-const app = express();
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
-require("dotenv").config();
+const dotenv = require("dotenv");
+const app = express();
+dotenv.config();
 
 // Middleware
-// Use body-parser middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-const corsOptions = {
-  origin: [
-    "http://localhost:5173",
-    "https://workmanager-srijonashraf.netlify.app",
-    "https://work-manager-frontend.vercel.app"
-  ],
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "localhost:5173",
+      "https://workmanager-srijonashraf.netlify.app",
+      "https://work-manager-frontend.vercel.app",
+      /\.netlify\.app$/,
+      /\.vercel\.app$/,
+    ],
+    credentials: true,
+  })
+);
 
 // Request Rate Limit
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 3000 });
@@ -44,17 +45,17 @@ try {
   console.error(err);
 }
 
-// Routing Implement
+// Routing
 const router = require("./src/routes/api");
 app.use("/api/v1", router);
 
 // Default route
-app.use("/", (req, res) => {
+app.get("/", (req, res) => {
   res.json({ message: "Hello From Express App!" });
 });
 
-// Undefined Route Implement
-app.use("*", (req, res) => {
+// Undefined Route
+app.use((req, res) => {
   res.status(404).json({ status: "fail", data: "Not Found" });
 });
 

@@ -34,7 +34,7 @@ exports.UserLogin = async (req, res) => {
       //!Whenever its not mention the sameSite:None it automatically set to cookies but Cookies.get() response null in both localhost and deploy, but if its not mentioned (default Lax) it does not set cookie in deploy but work totally fine in localhost
 
       res.cookie("token", token, {
-        httpOnly: process.env.NODE_ENV === "production",
+        // httpOnly: process.env.NODE_ENV === "production",
         secure: true, // Ensures that the cookie is only sent over HTTPS
         sameSite: "None", // Allows the cookie to be sent in cross-origin requests; Commenting this is working on localhost
         maxAge: 24 * 60 * 60 * 1000,

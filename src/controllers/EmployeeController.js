@@ -37,7 +37,6 @@ exports.UserLogin = async (req, res) => {
         httpOnly: process.env.NODE_ENV === "production",
         secure: true, // Ensures that the cookie is only sent over HTTPS
         sameSite: "None", // Allows the cookie to be sent in cross-origin requests; Commenting this is working on localhost
-        domain: "workmanager-srijonashraf.netlify.app",
         maxAge: 24 * 60 * 60 * 1000,
       });
 

@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
@@ -18,6 +18,9 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
+      "https://workmanager-srijonashraf.netlify.app",
+      "https://work-manager-frontend.vercel.app",
+      "https://work-manager-frontend.vercel.app/:1",
       "localhost:5173",
       /\.netlify\.app$/,
       /\.vercel\.app$/,
@@ -25,8 +28,6 @@ app.use(
     credentials: true,
   })
 );
-      // "https://workmanager-srijonashraf.netlify.app",
-      // "https://work-manager-frontend.vercel.app",
 
 // Request Rate Limit
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 3000 });

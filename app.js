@@ -19,14 +19,14 @@ app.use(
     origin: [
       "http://localhost:5173",
       "localhost:5173",
-      "https://workmanager-srijonashraf.netlify.app",
-      "https://work-manager-frontend.vercel.app",
       /\.netlify\.app$/,
       /\.vercel\.app$/,
     ],
     credentials: true,
   })
 );
+      // "https://workmanager-srijonashraf.netlify.app",
+      // "https://work-manager-frontend.vercel.app",
 
 // Request Rate Limit
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 3000 });

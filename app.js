@@ -18,8 +18,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://workmanagerweb.netlify.app/",
-      "https://workmanagerweb.vercel.app/",
+      "https://workmanagerweb.netlify.app",
+      "https://workmanagerweb.vercel.app",
     ],
   })
 );

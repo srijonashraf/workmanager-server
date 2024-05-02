@@ -20,9 +20,6 @@ app.use(
       "http://localhost:5173",
       "https://workmanager-srijonashraf.netlify.app",
       "https://work-manager-frontend.vercel.app",
-      "https://work-manager-frontend.vercel.app/:1",
-      /\.netlify\.app$/,
-      /\.vercel\.app$/,
     ],
     credentials: true,
   })

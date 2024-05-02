@@ -19,7 +19,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://workmanager-srijonashraf.netlify.app",
-      "https://work-manager-frontend.vercel.app",
+      "https://workmanagerweb.vercel.app/",
     ],
     credentials: true,
   })

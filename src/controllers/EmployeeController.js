@@ -31,12 +31,9 @@ exports.UserLogin = async (req, res) => {
       // Create JWT Token
       const token = CreateJWTToken(reqBody);
 
-      //!Whenever its not mention the sameSite:None it automatically set to cookies but Cookies.get() response null in both localhost and deploy, but if its not mentioned (default Lax) it does not set cookie in deploy but work totally fine in localhost
-
       res.cookie("token", token, {
         httpOnly: false,
-        secure: true, // Ensures that the cookie is only sent over HTTPS
-        sameSite: "None", // Allows the cookie to be sent in cross-origin requests; Commenting this is working on localhost
+        secure: true,
         maxAge: 24 * 60 * 60 * 1000,
       });
 
@@ -87,8 +84,7 @@ exports.UserGoogleSignIn = async (req, res) => {
         // Set the token as a cookie in the response
         res.cookie("token", token, {
           httpOnly: true,
-          secure: true, // Ensures that the cookie is only sent over HTTPS
-          sameSite: "None", // Allows the cookie to be sent in cross-origin requests
+          secure: true,
           maxAge: 24 * 60 * 60 * 1000,
         });
 
@@ -103,7 +99,6 @@ exports.UserGoogleSignIn = async (req, res) => {
         res.cookie("token", token, {
           httpOnly: true,
           secure: true,
-          sameSite: "None",
           maxAge: 24 * 60 * 60 * 1000,
         });
 
@@ -126,7 +121,6 @@ exports.UserGoogleSignIn = async (req, res) => {
       res.cookie("token", token, {
         httpOnly: true,
         secure: true,
-        sameSite: "None",
         maxAge: 24 * 60 * 60 * 1000,
       });
 
@@ -148,7 +142,7 @@ exports.UserLogout = async (req, res) => {
   try {
     let cookieOption = {
       expires: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      httpOnly: true,
+      secure: true,
     };
     res.cookie("token", "", cookieOption);
     return res

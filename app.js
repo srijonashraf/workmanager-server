@@ -18,14 +18,11 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://workmanager-srijonashraf.netlify.app",
+      "https://workmanagerweb.netlify.app/",
       "https://workmanagerweb.vercel.app/",
     ],
-    credentials: true,
   })
 );
-
-
 
 // Request Rate Limit
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 3000 });

@@ -73,6 +73,7 @@ exports.UserGoogleSignIn = async (req, res) => {
             $set: {
               firstName: existingUser.firstName || reqBody["firstName"],
               lastName: existingUser.lastName || reqBody["lastName"],
+              verified: true,
             },
           },
           { new: true }
@@ -83,7 +84,7 @@ exports.UserGoogleSignIn = async (req, res) => {
 
         // Set the token as a cookie in the response
         res.cookie("token", token, {
-          httpOnly: true,
+          httpOnly: false,
           secure: true,
           maxAge: 24 * 60 * 60 * 1000,
         });
@@ -97,7 +98,7 @@ exports.UserGoogleSignIn = async (req, res) => {
 
         // Set the token as a cookie in the response
         res.cookie("token", token, {
-          httpOnly: true,
+          httpOnly: false,
           secure: true,
           maxAge: 24 * 60 * 60 * 1000,
         });
@@ -112,6 +113,7 @@ exports.UserGoogleSignIn = async (req, res) => {
         email: reqBody["email"],
         firstName: reqBody["firstName"],
         lastName: reqBody["lastName"],
+        verified: true,
       });
 
       // Generate JWT token
@@ -119,7 +121,7 @@ exports.UserGoogleSignIn = async (req, res) => {
 
       // Set the token as a cookie in the response
       res.cookie("token", token, {
-        httpOnly: true,
+        httpOnly: false,
         secure: true,
         maxAge: 24 * 60 * 60 * 1000,
       });

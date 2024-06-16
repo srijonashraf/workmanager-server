@@ -29,7 +29,7 @@ router.get("/WorkStatusCountIndividual",AuthVerifyMiddleware,WorksController.Wor
 router.get("/WorkStatusUpdate/:id/:status",AuthVerifyMiddleware,WorksController.WorkStatusUpdate);
 router.post("/WorkUpdate/:id",AuthVerifyMiddleware,WorksController.WorkUpdate);
 router.get("/WorkDelete/:id",AuthVerifyMiddleware,WorksController.WorkDelete);
-// router.get("/WorkSearch",AuthVerifyMiddleware,WorksController.WorkSearch)
+router.get("/WorkSearch",AuthVerifyMiddleware,WorksController.WorkSearch)
 
 
 module.exports=router;

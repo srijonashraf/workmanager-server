@@ -206,21 +206,27 @@ exports.WorkDelete = async (req, res) => {
   }
 };
 
-// exports.WorkSearch = async (req, res) => {
-//   try {
-//     let email = req.headers["email"];
-//     let searchText = req.query.searchText; // Retrieve the search text from the query parameters
-//     let query = { createdBy: email, $text: { $search: searchText } };
+exports.WorkSearch = async (req, res) => {
+  try {
+    let email = req.headers["email"];
+    let searchText = req.query.q;
+    let results = await WorksModel.find(
+      {
+        createdBy: email,
+        $text: { $search: searchText },
+      },
+      {
+        score: { $meta: "textScore" },
+      }
+    ).sort({ score: { $meta: "textScore" } });
 
-//     // Using find to get multiple results based on text search
-//     let results = await WorksModel.find(query);
-
-//     if (results.length > 0) {
-//       res.status(200).json({ status: "success", data: results });
-//     } else {
-//       res.status(200).json({ status: "success", data: "No results found" });
-//     }
-//   } catch (e) {
-//     res.status(500).json({ status: "fail", error: e });
-//   }
-// };
+    if (results.length > 0) {
+      res.status(200).json({ status: "success", data: results });
+    } else {
+      res.status(200).json({ status: "fail", data: "No results found" });
+    }
+  } catch (e) {
+    res.status(500).json({ status: "fail", error: e });
+    console.log(e);
+  }
+};

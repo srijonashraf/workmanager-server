@@ -3,6 +3,9 @@ const EmployeeModel = require("../models/EmployeeModel");
 const jwt = require("jsonwebtoken");
 const OTPModel = require("../models/OTPModel");
 const SendEmailUtility = require("../utility/SendEmailUtility");
+const importData = require("../utility/Seeder.js");
+const dotenv = require("dotenv");
+dotenv.config();
 
 //User Registration
 exports.UserRegistration = async (req, res) => {
@@ -26,8 +29,14 @@ exports.UserRegistration = async (req, res) => {
 exports.UserLogin = async (req, res) => {
   try {
     let reqBody = req.body;
-    let result = await EmployeeModel.find(reqBody).count();
-    if (result === 1) {
+    let result = await EmployeeModel.findOne(reqBody);
+
+    console.log(result);
+
+    if (
+      result.email === reqBody.email &&
+      result.password === reqBody.password
+    ) {
       // Create JWT Token
       const token = CreateJWTToken(reqBody);
 
@@ -36,6 +45,10 @@ exports.UserLogin = async (req, res) => {
         secure: true,
         maxAge: 24 * 60 * 60 * 1000,
       });
+
+      if (result.email === process.env.DemoEmail) {
+        importData(result.email);
+      }
 
       res
         .status(200)

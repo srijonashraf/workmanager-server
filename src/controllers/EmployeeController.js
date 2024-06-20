@@ -31,8 +31,6 @@ exports.UserLogin = async (req, res) => {
     let reqBody = req.body;
     let result = await EmployeeModel.findOne(reqBody);
 
-    console.log(result);
-
     if (
       result.email === reqBody.email &&
       result.password === reqBody.password

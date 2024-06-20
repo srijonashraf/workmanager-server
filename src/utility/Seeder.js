@@ -9,7 +9,6 @@ const importData = async (userEmail) => {
     const createWorks = works.map((work) => {
       return { ...work, createdBy: userEmail };
     });
-    console.log(createWorks);
 
     await WorksModel.insertMany(createWorks);
   } catch (error) {

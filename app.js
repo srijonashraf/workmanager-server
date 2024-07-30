@@ -55,6 +55,7 @@ app.use((req, res) => {
   res.status(404).json({ status: "fail", data: "Not Found" });
 });
 
+// Set Access Controll Header by Default to resolve CORS issues
 app.use((req, res, next) => {
   res.header(
     "Access-Control-Allow-Headers",

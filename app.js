@@ -16,11 +16,9 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://workmanagerweb.netlify.app",
-      "https://workmanagerweb.vercel.app",
-    ],
+    origin: ["http://localhost:5173", "https://workmanagerweb.netlify.app"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   })
 );
 
@@ -56,5 +54,6 @@ app.get("/", (req, res) => {
 app.use((req, res) => {
   res.status(404).json({ status: "fail", data: "Not Found" });
 });
+
 
 module.exports = app;
